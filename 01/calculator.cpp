@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <exception>
 using namespace std;
 
 void SkipSpaces(string &str)
@@ -13,11 +14,12 @@ void SkipSpaces(string &str)
 }
 
 // first priority operation
-bool get_number(string &str, int &result)
+int get_number(string &str)
 {
 	string copy_str = str;
 	SkipSpaces(copy_str);
 
+	int result = 0;
 	int indx = 0;
 	int sign = 1;
 	if (copy_str.size() > 0 && copy_str[0] == '-')
@@ -34,9 +36,9 @@ bool get_number(string &str, int &result)
 		result = std::stoi(copy_str.substr(0, indx));
 		result *= sign;
 		str = copy_str.substr(indx);
-		return true;
+		return result;
 	}
-	return false;
+	throw invalid_argument("Error input string! Expected number in the string.");
 }
 
 // second priority operation
@@ -45,12 +47,9 @@ int try_MulDiv(string &str)
 	int left_result = 0, right_result = 0;
 	try
 	{
-		if (!get_number(str, left_result))
-		{
-			throw string("Error input string! Expected number in the string.");
-		}
+		left_result = get_number(str);
 	}
-	catch (string err)
+	catch (invalid_argument& err)
 	{
 		throw err;
 	}
@@ -74,7 +73,7 @@ int try_MulDiv(string &str)
 		{
 			right_result = try_MulDiv(str);
 		}
-		catch (string err)
+		catch (invalid_argument& err)
 		{
 			throw err;
 		}
@@ -82,7 +81,7 @@ int try_MulDiv(string &str)
 		if (op == '*') return left_result * right_result;
 		if (op == '/')
 		{
-			if (right_result == 0) throw string("Error expression! Division by zero.");
+			if (right_result == 0) throw invalid_argument("Error expression! Division by zero.");
 			return left_result / right_result;
 		}
 	}
@@ -90,14 +89,14 @@ int try_MulDiv(string &str)
 }
 
 // third priority operation
-int try_AddSub(std::string &str)
+int try_AddSub(string &str)
 {
 	int left_result = 0, right_result = 0;
 	try
 	{
 		left_result = try_MulDiv(str);
 	}
-	catch (string err)
+	catch (invalid_argument& err)
 	{
 		throw err;
 	}
@@ -114,10 +113,10 @@ int try_AddSub(std::string &str)
 		{
 			if (op != '+' && op != '-')
 			{
-				throw string("Error input string! Expected '+' or '-' in the string.");
+				throw invalid_argument("Error input string! Expected '+' or '-' in the string.");
 			}
 		}
-		catch (string err)
+		catch (invalid_argument& err)
 		{
 			throw err;
 		}
@@ -126,7 +125,7 @@ int try_AddSub(std::string &str)
 		{
 			right_result = try_AddSub(str);
 		}
-		catch (string err)
+		catch (invalid_argument err)
 		{
 			throw err;
 		}
@@ -137,19 +136,18 @@ int try_AddSub(std::string &str)
 	return left_result;
 }
 
-// caolculate expression in str. log contains error message after calculation (need for testing)
-bool calculate(string &str, int &result, string &log)
+// caolculate expression in str
+int calculate(string const & str)
 {
-	result = 0;
+	string copy_str = str;
+	int result = 0;
 	try
 	{
-		result = try_AddSub(str);
-		log = "success";
-		return true;
+		result = try_AddSub(copy_str);
+		return result;
 	}
-	catch (string err)
+	catch (invalid_argument& err)
 	{
-		log = err;
-		return false;
+		throw err;
 	}
 }

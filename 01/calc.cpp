@@ -1,6 +1,7 @@
 ﻿#include <iostream>
 using namespace std;
 #include <string>
+#include <exception>
 #include "calculator.h"
 
 int main(int argc, char *argv[])
@@ -15,12 +16,15 @@ int main(int argc, char *argv[])
 	string log(""); // contains error message after calculation (need for testing)
 	int result;
 
-	if (calculate(expression, result, log)) // print result if calculation completed
+	try
 	{
-		cout << result << "\n";
+		result = calculate(expression);
+		cout << result;
 		return 0;
 	}
-	else // print error if calculation failed
-		cout << log;
-	return 1;
+	catch (invalid_argument err)
+	{
+		cout << err.what();
+		return 1;
+	}
 }

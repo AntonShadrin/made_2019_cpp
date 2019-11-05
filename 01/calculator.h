@@ -5,7 +5,7 @@ using std::string;
 void SkipSpaces(string &str);
 
 // first priority operation
-bool get_number(string &str, int &result);
+int get_number(string &str);
 
 // second priority operation
 int try_MulDiv(string &str);
@@ -14,6 +14,6 @@ int try_MulDiv(string &str);
 int try_AddSub(std::string &str);
 
 // caolculate expression in str. log contains error message after calculation (need for testing)
-bool calculate(string &str, int &result, string &log);
+int calculate(const string &str);
 
 #endif

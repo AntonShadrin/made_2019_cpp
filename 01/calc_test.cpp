@@ -11,25 +11,101 @@ string log_error_division_by_zero("Error expression! Division by zero.");
 bool test_invalid_string()
 {
 	int result = 0;
-	string log("");
 	string test1(" 1 + 1 -/ 2");
 	string test2("--1");
 	string test3("");
 	string test4("abc");
 	string test5("1 % 2");
 	string test6("1 +2 plus 3");
-	if (calculate(test1, result, log) || log != log_error_number)
-	{ cout << "test_invalid_string FAILED! test1\n"; return false; }
-	if (calculate(test2, result, log) || log != log_error_number)
-	{ cout << "test_invalid_string FAILED! test2\n"; return false; }
-	if (calculate(test3, result, log) || log != log_error_number)
-	{ cout << "test_invalid_string FAILED! test3\n"; return false; }
-	if (calculate(test4, result, log) || log != log_error_number)
-	{ cout << "test_invalid_string FAILED! test4\n"; return false; }
-	if (calculate(test5, result, log) || log != log_error_operator)
-	{ cout << "test_invalid_string FAILED! test5\n"; return false; }
-	if (calculate(test6, result, log) || log != log_error_operator)
-	{ cout << "test_invalid_string FAILED! test6\n"; return false; }
+	try
+	{
+		result = calculate(test1);
+		cout << "test_invalid_string FAILED! test1\n";
+		return false;
+	}
+	catch (const invalid_argument err)
+	{
+		if (err.what() != log_error_number)
+		{
+			cout << "test_invalid_string FAILED! test1\n";
+			return false;
+		}
+	}
+
+	try
+	{
+		result = calculate(test2);
+		cout << "test_invalid_string FAILED! test2\n";
+		return false;
+	}
+	catch (const invalid_argument err)
+	{
+		if (err.what() != log_error_number)
+		{
+			cout << "test_invalid_string FAILED! test2\n";
+			return false;
+		}
+	}
+
+	try
+	{
+		result = calculate(test3);
+		cout << "test_invalid_string FAILED! test3\n";
+		return false;
+	}
+	catch (const invalid_argument err)
+	{
+		if (err.what() != log_error_number)
+		{
+			cout << "test_invalid_string FAILED! test3\n";
+			return false;
+		}
+	}
+
+	try
+	{
+		result = calculate(test4);
+		cout << "test_invalid_string FAILED! test4\n";
+		return false;
+	}
+	catch (const invalid_argument err)
+	{
+		if (err.what() != log_error_number)
+		{
+			cout << "test_invalid_string FAILED! test4\n";
+			return false;
+		}
+	}
+
+	try
+	{
+		result = calculate(test5);
+		cout << "test_invalid_string FAILED! test5\n";
+		return false;
+	}
+	catch (const invalid_argument err)
+	{
+		if (err.what() != log_error_operator)
+		{
+			cout << "test_invalid_string FAILED! test5\n";
+			return false;
+		}
+	}
+
+	try
+	{
+		result = calculate(test6);
+		cout << "test_invalid_string FAILED! test6\n";
+		return false;
+	}
+	catch (const invalid_argument err)
+	{
+		if (err.what() != log_error_operator)
+		{
+			cout << "test_invalid_string FAILED! test6\n";
+			return false;
+		}
+	}
 
 	cout << "test_invalid_string COMPLETED!\n";
 	return true;
@@ -39,23 +115,46 @@ bool test_invalid_string()
 bool test_with_subtraction()
 {
 	int result = 0;
-	string log("");
 
 	string test1("1--2");
 	string test2("1*2--3");
 	string test3("-1");
 	string test4("1*-2");
 	string test5("2/ -1");
-	if (!calculate(test1, result, log) || result!= 3 || log != log_success)
-	{ cout << "test_with_subtraction FAILED! test1\n"; return false; }
-	if (!calculate(test2, result, log) || result!= 5 || log != log_success)
-	{ cout << "test_with_subtraction FAILED! test2\n"; return false; }
-	if (!calculate(test3, result, log) || result!= -1 || log != log_success)
-	{ cout << "test_with_subtraction FAILED! test3\n"; return false; }
-	if (!calculate(test4, result, log) || result!= -2 || log != log_success)
-	{ cout << "test_with_subtraction FAILED! test4\n"; return false; }
-	if (!calculate(test5, result, log) || result!= -2 || log != log_success)
-	{ cout << "test_with_subtraction FAILED! test5\n"; return false; }
+
+	try
+	{
+		if (calculate(test1) != 3)
+		{
+			cout << "test_with_subtraction FAILED! test1\n";
+			return false;
+		}
+		if (calculate(test2) != 5)
+		{
+			cout << "test_with_subtraction FAILED! test2\n";
+			return false;
+		}
+		if (calculate(test3) != -1)
+		{
+			cout << "test_with_subtraction FAILED! test3\n";
+			return false;
+		}
+		if (calculate(test4) != -2)
+		{
+			cout << "test_with_subtraction FAILED! test4\n";
+			return false;
+		}
+		if (calculate(test5) != -2)
+		{
+			cout << "test_with_subtraction FAILED! test5\n";
+			return false;
+		}
+	}
+	catch (const invalid_argument err)
+	{
+		cout << "test_with_subtraction FAILED! There should be no exception\n";
+		return false;
+	}
 
 	cout << "test_with_subtraction COMPLETED!\n";
 	return true;
@@ -69,13 +168,23 @@ bool test_with_double_digit()
 
 	string test1("1--12");
 	string test2("1*2--31");
-	if (!calculate(test1, result, log) || result != 13 || log != log_success)
+	try
 	{
-		cout << "test_with_double_digit FAILED! test1\n"; return false;
+		if (calculate(test1) != 13)
+		{
+			cout << "test_with_double_digit FAILED! test1\n";
+			return false;
+		}
+		if (calculate(test2) != 33)
+		{
+			cout << "test_with_double_digit FAILED! test2\n";
+			return false;
+		}
 	}
-	if (!calculate(test2, result, log) || result != 33 || log != log_success)
+	catch (const invalid_argument err)
 	{
-		cout << "test_with_double_digit FAILED! test2\n"; return false;
+		cout << "test_with_double_digit FAILED! There should be no exception\n";
+		return false;
 	}
 
 	cout << "test_with_double_digit COMPLETED!\n";
@@ -90,13 +199,32 @@ bool test_with_zeros()
 
 	string test1("0 + 0 -0 *0");
 	string test2("1+2+ -3 / 0");
-	if (!calculate(test1, result, log) || result!=0 || log != log_success)
+	try
 	{
-		cout << "test_with_zeros FAILED! test1\n"; return false;
+		if (calculate(test1)!=0)
+		{
+			cout << "test_with_zeros FAILED! test1\n";
+			return false;
+		}
 	}
-	if (calculate(test2, result, log) || log != log_error_division_by_zero)
+	catch (invalid_argument err)
 	{
-		cout << "test_with_zeros FAILED! test1\n"; return false;
+		cout << "test_with_zeros FAILED! There should be no exception\n";
+		return false;
+	}
+	try
+	{
+		result = calculate(test2);
+		cout << "test_with_zeros FAILED! test2\n";
+		return false;
+	}
+	catch (invalid_argument err)
+	{
+		if (err.what() != log_error_division_by_zero)
+		{
+			cout << "test_with_zeros FAILED! test2\n";
+			return false;
+		}
 	}
 
 	cout << "test_with_zeros COMPLETED!\n";
@@ -111,13 +239,26 @@ bool test_big_expressions()
 
 	string test1("14+-12*2-23/-2");
 	string test2("42 + -40 /2/2-1");
-	if (!calculate(test1, result, log) || result != 1 || log != log_success)
+	try
 	{
-		cout << "test_big_expressions FAILED! test1\n"; return false;
+		if (calculate(test1) != 1)
+		{
+			cout << "test_big_expressions FAILED! test1\n";
+			return false;
+		}
+		if (calculate(test2) != 1)
+		{
+			cout << "test_big_expressions FAILED! test2\n";
+			return false;
+		}
 	}
-	if (!calculate(test2, result, log) || result != 1 || log != log_success)
+	catch (const std::exception&)
 	{
-		cout << "test_big_expressions FAILED! test2\n"; return false;
+		if (calculate(test1) != 1)
+		{
+			cout << "test_big_expressions FAILED! There should be no exception\n";
+			return false;
+		}
 	}
 
 	cout << "test_big_expressions COMPLETED!\n";
