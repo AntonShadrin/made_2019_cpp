@@ -1,7 +1,7 @@
 all: calc calc_test
 	
 run: calc
-	./calc ${arg}
+	./calc "${arg}"
 	
 test: calc_test
 	./calc_test
