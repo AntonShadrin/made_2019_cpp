@@ -10,7 +10,7 @@ enum class Error
 
 class Serializer
 {
-	static const char Separator = ' ';
+	static constexpr char Separator = ' ';
 	std::ostream& out_;
 public:
 	explicit Serializer(std::ostream& out)
@@ -53,14 +53,7 @@ private:
 		return process(std::forward<ArgsT>(args)...);
 	}
 
-
-	template <class T>
-	Error load(T& value)
-	{
-		return Error::CorruptedArchive;
-	}
-	template <>
-	Error load<bool>(bool& value)
+	Error load(bool& value)
 	{
 		if (value)
 			out_ << "true";
@@ -70,8 +63,8 @@ private:
 			return Error::CorruptedArchive;
 		return Error::NoError;
 	}
-	template <>
-	Error load<uint64_t>(uint64_t& value)
+
+	Error load(uint64_t& value)
 	{
 		out_ << value;
 		if (out_.bad())
@@ -111,6 +104,7 @@ private:
 			return Error::CorruptedArchive;
 		return Error::NoError;
 	}
+
 	template <class T, class... ArgsT>
 	Error process(T&& val, ArgsT&&... args)
 	{
@@ -119,13 +113,7 @@ private:
 		return process(std::forward<ArgsT>(args)...);
 	}
 
-	template <class T>
-	Error load(T& value)
-	{
-		return Error::CorruptedArchive;
-	}
-	template <>
-	Error load<bool>(bool& value)
+	Error load(bool& value)
 	{
 		if (!in_)
 			return Error::CorruptedArchive;
@@ -141,8 +129,8 @@ private:
 
 		return Error::NoError;
 	}
-	template <>
-	Error load<uint64_t>(uint64_t& value)
+	
+	Error load(uint64_t& value)
 	{
 		if (!in_)
 			return Error::CorruptedArchive;

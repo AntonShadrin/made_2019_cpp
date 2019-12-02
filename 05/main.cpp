@@ -52,8 +52,6 @@ bool test_serializator()
 	return true;
 }
 
-
-
 int main()
 {
 	if (!test_serializator())
