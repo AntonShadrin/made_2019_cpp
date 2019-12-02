@@ -1,40 +1,79 @@
 #include <string>
 #include <list>
-#include <regex>
 #include "parser.h"
 #include <iostream>
 
 
-bool is_number(const std::string& s)
+
+parser::parser(const std::string& s)
 {
-	std::string::const_iterator it = s.begin();
-	while (it != s.end() && isdigit(*it)) ++it;
-	return !s.empty() && it == s.end();
+	str = s;
+	f_start = nullptr;
+	f_token = nullptr;
+	f_end = nullptr;
 }
 
-std::list<token> parse(const std::string& str, //
-	void(*f_token)(const token& tkn), //
-	void (*f_start)(), void (*f_end)())
+void parser::set_f_start(void(*f)())
+{
+	f_start = f;
+}
+
+void parser::set_f_token(void(*f)(const token& tkn))
+{
+	f_token = f;
+}
+
+void parser::set_f_end(void(*f)())
+{
+	f_end = f;
+}
+
+void parser::set_string(const std::string& s)
+{
+	str = s;
+}
+
+std::list<token> parser::parse()
 {
 	//call f_start
 	if (f_start != nullptr)
 		f_start();
 
 	std::list<token> result;
-	std::regex regEx("[^\\s]+");
-	auto begin = std::sregex_iterator(str.cbegin(), str.cend(), regEx);
-	auto end = std::sregex_iterator();
-	for (std::sregex_iterator i = begin; i != end; ++i)
+	std::string cur_str = "";
+	for (int i = 0; i < str.size(); ++i)
 	{
-		std::smatch match = *i;
+		if (str[i] != ' ')
+			cur_str.append(1,str[i]);
+		else
+		{
+			if (!cur_str.empty())
+			{
+				token new_token;
+				new_token.str = cur_str;
+				if (is_number(new_token.str))
+					new_token.type = NUMBER;
+				else
+					new_token.type = STRING;
+				result.push_back(new_token);
+				cur_str.clear();
+				//call f_token
+				if (f_token != nullptr)
+					f_token(new_token);
+			}
+		}
+	}
+	// после выхода из цикла могла остаться необработанная строчка
+	if (!cur_str.empty())
+	{
 		token new_token;
-		new_token.str = match.str();
-		if(is_number(new_token.str))
+		new_token.str = cur_str;
+		if (is_number(new_token.str))
 			new_token.type = NUMBER;
 		else
 			new_token.type = STRING;
 		result.push_back(new_token);
-
+		cur_str.clear();
 		//call f_token
 		if (f_token != nullptr)
 			f_token(new_token);
@@ -45,4 +84,11 @@ std::list<token> parse(const std::string& str, //
 		f_end();
 
 	return result;
+}
+
+bool parser::is_number(const std::string& s)
+{
+	std::string::const_iterator it = s.begin();
+	while (it != s.end() && isdigit(*it)) ++it;
+	return !s.empty() && it == s.end();
 }

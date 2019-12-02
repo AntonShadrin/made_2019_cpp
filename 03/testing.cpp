@@ -1,7 +1,6 @@
 #include <iostream>
 #include <string>
 #include <list>
-#include <regex>
 #include "parser.h"
 
 void token_func(const token& tkn)
@@ -28,7 +27,9 @@ bool tets_good_parse()
 	std::string test1 = "test + 123 = test123";
 	std::string test2 = "";
 	// test1
-	std::list<token> parse1 = parse(test1);
+
+	parser str_parser(test1);
+	std::list<token> parse1 = str_parser.parse();
 	std::list<token> result1 = { { "test",STRING }, { "+",STRING }, //
 								{"123",NUMBER}, { "=",STRING }, { "test123",STRING } };
 	if (parse1.size() != result1.size())
@@ -47,7 +48,8 @@ bool tets_good_parse()
 		it_res++;
 	}
 	// test2
-	std::list<token> parse2 = parse(test2);
+	str_parser.set_string(test2);
+	std::list<token> parse2 = str_parser.parse();
 	if (!parse2.empty())
 	{
 		std::cout << "tets_good_parse FAILED! Error test2!\n";
@@ -67,6 +69,11 @@ int main()
 
 	std::string test_my_func = "test + 123 = test123";
 	std::cout << "input string: " << test_my_func << "\n\n";
-	std::list<token> result = parse(test_my_func, token_func, start_func, end_func);
+
+	parser str_parser(test_my_func);
+	str_parser.set_f_start(start_func);
+	str_parser.set_f_token(token_func);
+	str_parser.set_f_end(end_func);
+	std::list<token> result = str_parser.parse();
 	return 0;
 }

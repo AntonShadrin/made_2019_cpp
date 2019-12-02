@@ -35,6 +35,10 @@ int main(int argc, char *argv[])
 	std::string line(argv[1]);
 
 	// вызов с функциями
-	std::list<token> result = parse(line, token_func, start_func, end_func);
+	parser str_parser(line);
+	str_parser.set_f_start(start_func);
+	str_parser.set_f_token(token_func);
+	str_parser.set_f_end(end_func);
+	std::list<token> result = str_parser.parse();
 	return 0;
 }
