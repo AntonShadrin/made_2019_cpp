@@ -1,6 +1,5 @@
 #include <iostream>
 #include "matrix.h"
-#include <stdexcept>
 
 bool test_matrix()
 {
@@ -14,7 +13,8 @@ bool test_matrix()
 	//проверка
 	for (int i = 0; i < row; ++i)
 		for (int j = 0; j < col; j++)
-			if (m[i][j] != i) return false;
+			if (m[i][j] != i)
+				return false;
 	//умножение
 	for (int i = 0; i < row; ++i)
 		for (int j = 0; j < col; j++)

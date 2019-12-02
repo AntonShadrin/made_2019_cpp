@@ -1,45 +1,45 @@
 #include <vector>
-#include <assert.h>
-#include <stdexcept>
 #include "matrix.h"
 
 
-int Matrix::getRows() const
+size_t Matrix::getRows() const
 {
 	return matrix.size();
 }
 
-int Matrix::getColumns() const
+size_t Matrix::getColumns() const
 {
-	assert(matrix.size() != 0);
+	if (matrix.empty())
+		return 0;
 	return matrix[0].size();
 }
 
 Matrix::Matrix(size_t n_rows, size_t n_col)
 {
 	matrix.resize(n_rows);
-	for (int i = 0; i < n_rows; ++i)
+	for (size_t i = 0; i < n_rows; ++i)
 	{
 		matrix[i].resize(n_col);
 	}
 }
 
-void Matrix::operator *= (const int& vol)
+Matrix* Matrix::operator *= (const int vol)
 {
-	for (int i = 0; i < matrix.size(); ++i)
+	for (size_t i = 0; i < matrix.size(); ++i)
 	{
-		for (int j = 0; j < matrix[i].size(); ++j)
+		for (size_t j = 0; j < matrix[i].size(); ++j)
 		{
 			matrix[i][j] *= vol;
 		}
 	}
+	return this;
 }
 
 bool Matrix::operator == (const Matrix& other) const
 {
 	if (this == &other)
 		return true;
-	for (int i = 0; i < matrix.size(); ++i)
+	for (size_t i = 0; i < matrix.size(); ++i)
 		if (matrix[i] != other.matrix[i]) return false;
 	return true;
 }
@@ -51,14 +51,28 @@ bool Matrix::operator != (const Matrix& other) const
 
 Matrix::Proxy Matrix::operator [] (int i)
 {
-	if (i > matrix.size() - 1)
+	if (i >= matrix.size())
 		throw std::out_of_range("Matrix: axis 0 out of range!");
-	return Proxy(&(matrix[i]));
+	return Proxy(matrix[i]);
+}
+
+const Matrix::constProxy Matrix::operator [] (int i) const
+{
+	if (i >= matrix.size())
+		throw std::out_of_range("Matrix: axis 0 out of range!");
+	return constProxy(matrix[i]);
 }
 
 int& Matrix::Proxy::operator [] (int j)
 {
-	if (j > (*rowPtr).size() - 1)
+	if (j >= rowPtr.size())
 		throw std::out_of_range("Matrix: axis 1 out of range!");
-	return ((*rowPtr)[j]);
+	return (rowPtr[j]);
+}
+
+const int& Matrix::constProxy::operator [] (int j) const
+{
+	if (j >= rowPtr_const.size())
+		throw std::out_of_range("Matrix: axis 1 out of range!");
+	return (rowPtr_const[j]);
 }
