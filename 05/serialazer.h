@@ -19,7 +19,7 @@ public:
 	}
 
 	template <class T>
-	Error save(T& object)
+	Error save(T&& object)
 	{
 		return object.serialize(*this);
 	}
@@ -27,7 +27,7 @@ public:
 	template <class... ArgsT>
 	Error operator()(ArgsT&&... args)
 	{
-		return process(args...);
+		return process(std::forward<ArgsT>(args)...);
 	}
 
 private:
@@ -84,7 +84,7 @@ public:
 	}
 
 	template <class T>
-	Error save(T& object)
+	Error save(T&& object)
 	{
 		return object.serialize(*this);
 	}
@@ -92,7 +92,7 @@ public:
 	template <class... ArgsT>
 	Error operator()(ArgsT&&... args)
 	{
-		return process(args...);
+		return process(std::forward<ArgsT>(args)...);
 	}
 
 private:
