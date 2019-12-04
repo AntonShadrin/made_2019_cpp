@@ -13,17 +13,17 @@ parser::parser(const std::string& s)
 	f_end = nullptr;
 }
 
-void parser::set_f_start(void(*f)())
+void parser::set_f_start(write_messege f)
 {
 	f_start = f;
 }
 
-void parser::set_f_token(void(*f)(const token& tkn))
+void parser::set_f_token(calback_token f)
 {
 	f_token = f;
 }
 
-void parser::set_f_end(void(*f)())
+void parser::set_f_end(write_messege f)
 {
 	f_end = f;
 }
@@ -63,7 +63,7 @@ std::list<token> parser::parse()
 			}
 		}
 	}
-	// после выхода из цикла могла остаться необработанная строчка
+	// РїРѕСЃР»Рµ РІС‹С…РѕРґР° РёР· С†РёРєР»Р° РјРѕРіР»Р° РѕСЃС‚Р°С‚СЊСЃСЏ РЅРµРѕР±СЂР°Р±РѕС‚Р°РЅРЅР°СЏ СЃС‚СЂРѕС‡РєР°
 	if (!cur_str.empty())
 	{
 		token new_token;

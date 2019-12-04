@@ -3,7 +3,7 @@
 #include <list>
 #include "parser.h"
 
-// пишет токен и какому типу он соответствует
+// РїРёС€РµС‚ С‚РѕРєРµРЅ Рё РєР°РєРѕРјСѓ С‚РёРїСѓ РѕРЅ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚
 void token_func(const token& tkn)
 {
 	std::cout << tkn.str;
@@ -13,13 +13,13 @@ void token_func(const token& tkn)
 		std::cout << " it's STRING token\n";
 }
 
-// объявляет начало разбора строки
+// РѕР±СЉСЏРІР»СЏРµС‚ РЅР°С‡Р°Р»Рѕ СЂР°Р·Р±РѕСЂР° СЃС‚СЂРѕРєРё
 void start_func()
 {
 	std::cout << "START!\n";
 }
 
-// объявляет конец разбора строки
+// РѕР±СЉСЏРІР»СЏРµС‚ РєРѕРЅРµС† СЂР°Р·Р±РѕСЂР° СЃС‚СЂРѕРєРё
 void end_func()
 {
 	std::cout << "END!\n";
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 	}
 	std::string line(argv[1]);
 
-	// вызов с функциями
+	// РІС‹Р·РѕРІ СЃ С„СѓРЅРєС†РёСЏРјРё
 	parser str_parser(line);
 	str_parser.set_f_start(start_func);
 	str_parser.set_f_token(token_func);

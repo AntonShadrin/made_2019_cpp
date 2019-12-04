@@ -15,9 +15,9 @@ class parser
 public:
 	parser(const std::string& s);
 	void set_string(const std::string& s);
-	void set_f_start(void(*f)());
-	void set_f_token(void(*f)(const token& tkn));
-	void set_f_end(void(*f)());
+	void set_f_start(write_messege f);
+	void set_f_token(calback_token f);
+	void set_f_end(write_messege f);
 	std::list<token> parse();
 
 private:
