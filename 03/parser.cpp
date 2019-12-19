@@ -19,12 +19,12 @@ void parser::set_f_start(write_messege f)
 	f_start = f;
 }
 
-void parser::set_f_token_number(calback_token f)
+void parser::set_f_token_number(calback_token_number f)
 {
 	f_token_number = f;
 }
 
-void parser::set_f_token_string(calback_token f)
+void parser::set_f_token_string(calback_token_string f)
 {
 	f_token_string = f;
 }
@@ -62,14 +62,17 @@ std::list<token> parser::parse()
 					new_token.type = NUMBER;
 					//call f_token_number
 					if (f_token_number != nullptr)
-						f_token_number(new_token);
+					{
+						int num_tkn = atoi(new_token.str.c_str());
+						f_token_number(num_tkn);
+					}
 				}
 				else
 				{
 					new_token.type = STRING;
 					//call f_token_string
 					if (f_token_string != nullptr)
-						f_token_string(new_token);
+						f_token_string(new_token.str);
 				}
 				result.push_back(new_token);
 				cur_str.clear();
@@ -86,14 +89,17 @@ std::list<token> parser::parse()
 			new_token.type = NUMBER;
 			//call f_token_number
 			if (f_token_number != nullptr)
-				f_token_number(new_token);
+			{
+				int num_tkn = atoi(new_token.str.c_str());
+				f_token_number(num_tkn);
+			}
 		}
 		else
 		{
 			new_token.type = STRING;
 			//call f_token_string
 			if (f_token_string != nullptr)
-				f_token_string(new_token);
+				f_token_string(new_token.str);
 		}
 		result.push_back(new_token);
 		cur_str.clear();

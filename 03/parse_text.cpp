@@ -4,15 +4,15 @@
 #include "parser.h"
 
 // пишет числовой токен
-void token_number_func(const token& tkn)
+void token_number_func(const int& tkn)
 {
-	std::cout << tkn.str << " it's NUMBER token\n";
+	std::cout << tkn << " it's NUMBER token\n";
 }
 
 // пишет строковый токен
-void token_string_func(const token& tkn)
+void token_string_func(const std::string& tkn)
 {
-	std::cout << tkn.str << " it's STRING token\n";
+	std::cout << tkn << " it's STRING token\n";
 }
 
 // объявляет начало разбора строки
