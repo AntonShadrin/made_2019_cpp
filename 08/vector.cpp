@@ -7,7 +7,6 @@
 template <class T>
 class Iterator
 {
-	friend class vector;
 public:
 	using value_type = T;
 	using reference = value_type & ;
@@ -119,7 +118,7 @@ public:
 		{
 			this->resize(capacity_ * 2);
 		}
-		alloc_.construct(p_ + size_, std::forward<value_type>(value));
+		alloc_.construct(p_ + size_, std::move(value));
 		size_++;
 	}
 
