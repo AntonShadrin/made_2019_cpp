@@ -11,6 +11,7 @@ class Iterator
 public:
 	using value_type = T;
 	using reference = value_type & ;
+	using difference_type = std::ptrdiff_t;
 
 
 	Iterator(value_type* p) : p_(p) {}
@@ -38,12 +39,17 @@ public:
 		return *this;
 	}
 
+	reference operator[](difference_type n)
+	{
+		return *(p_ + n);
+	}
+
 private:
 	value_type* p_;
 };
 
 template<class T, class Allocator = std::allocator<T>>
-class my_vector
+class Vector
 {
 public:
 	using value_type = T;
@@ -53,13 +59,13 @@ public:
 	using reference = value_type& ;
 	using pointer = value_type* ;
 
-	explicit my_vector(const allocator_type& alloc = allocator_type())
+	explicit Vector(const allocator_type& alloc = allocator_type())
 		: alloc_(alloc)
 	{
 		capacity_ = 0;
 		size_ = 0;
 	}
-	my_vector(size_type count, const value_type& value, const allocator_type& alloc = allocator_type())
+	Vector(size_type count, const value_type& value, const allocator_type& alloc = allocator_type())
 		: alloc_(alloc)
 	{
 		if (count <= alloc_.max_size())
@@ -78,8 +84,10 @@ public:
 		}
 	}
 
-	~my_vector()
+	~Vector()
 	{
+		for (size_type i = 0; i < size_; ++i)
+			alloc_.destroy(p_ + i);
 		alloc_.deallocate(p_, capacity_);
 		p_ = nullptr;
 	}
@@ -102,7 +110,7 @@ public:
 		{
 			this->resize(capacity_ * 2);
 		}
-		p_[size_] = value;
+		alloc_.construct(p_ + size_, value);
 		size_++;
 	}
 	void push_back(value_type&& value)
@@ -111,14 +119,17 @@ public:
 		{
 			this->resize(capacity_ * 2);
 		}
-		p_[size_] = std::forward<value_type>(value);
+		alloc_.construct(p_ + size_, std::forward<value_type>(value));
 		size_++;
 	}
 
 	void pop_back()
 	{
 		if (size_ > 0)
+		{
+			alloc_.destroy(p_ + size);
 			size_--;
+		}
 	}
 
 	bool empty() const
@@ -133,6 +144,8 @@ public:
 
 	void clear()
 	{
+		for (size_type i = 0; i < size_; ++i)
+			alloc_.destroy(p_ + i);
 		size_ = 0;
 	}
 
@@ -187,6 +200,8 @@ public:
 					{
 						alloc_.construct(tmp_p + i, p_[i]);
 					}
+					for (size_type i = 0; i < size_; ++i)
+						alloc_.destroy(p_ + i);
 					alloc_.dellallocate(p_, capacity_);
 					p_ = tmp_p;
 					capacity_ = count;
@@ -195,7 +210,7 @@ public:
 		}
 		else
 		{
-			throw std::length_error;
+			throw std::length_error("count > alloc_.max_size().");
 		}
 	}
 
@@ -218,6 +233,8 @@ public:
 					{
 						alloc_.construct(tmp_p + i, p_[i]);
 					}
+					for (size_type i = 0; i < size_; ++i)
+						alloc_.destroy(p_ + i);
 					alloc_.deallocate(p_, capacity_);
 					p_ = tmp_p;
 					capacity_ = count;
@@ -228,11 +245,17 @@ public:
 					{
 						pointer tmp_p = alloc_.allocate(count);
 						if (size_ > count)
+						{
+							for (size_type i = count; i < size_; ++i)
+								alloc_.destroy(p_ + i);
 							size_ = count;
+						}
 						for (size_type i = 0; i < size_; i++)
 						{
 							alloc_.construct(tmp_p + i, p_[i]);
 						}
+						for (size_type i = 0; i < size_; ++i)
+							alloc_.destroy(p_ + i);
 						alloc_.deallocate(p_, capacity_);
 						p_ = tmp_p;
 						capacity_ = count;
@@ -268,6 +291,8 @@ public:
 					{
 						alloc_.construct(tmp_p + i, value);
 					}
+					for (size_type i = 0; i < size_; ++i)
+						alloc_.destroy(p_ + i);
 					alloc_.dellallocate(p_, capacity_);
 					p_ = tmp_p;
 					capacity_ = count;
@@ -278,7 +303,11 @@ public:
 					{
 						pointer tmp_p = alloc_.allocate(count);
 						if (size_ > count)
+						{
+							for (size_type i = count; i < size_; ++i)
+								alloc_.destroy(p_ + i);
 							size_ = count;
+						}
 						for (size_type i = 0; i < size_; i++)
 						{
 							alloc_.construct(tmp_p + i, p_[i]);
@@ -287,6 +316,8 @@ public:
 						{
 							alloc_.construct(tmp_p + i, value);
 						}
+						for (size_type i = 0; i < size_; ++i)
+							alloc_.destroy(p_ + i);
 						alloc_.dellallocate(p_, capacity_);
 						p_ = tmp_p;
 						capacity_ = count;
@@ -296,7 +327,7 @@ public:
 		}
 		else
 		{
-			throw std::length_error;
+			throw std::length_error("count > alloc_.max_size().");
 		}
 	}
 
@@ -305,11 +336,17 @@ private:
 	size_type size_ = 0;
 	pointer p_ = nullptr;
 	allocator_type alloc_;
+
+	void destroy(pointer p, size_type size)
+	{
+		for (size_type i = 0; i < size; ++i)
+			alloc_.destroy(p + i);
+	}
 };
 
 bool test()
 {
-	my_vector<int> vec(5, 0);
+	Vector<int> vec(5, 0);
 	vec.push_back(5);
 	vec.push_back(6);
 	vec.push_back(7);
