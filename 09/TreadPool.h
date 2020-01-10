@@ -8,7 +8,8 @@ class ThreadPool
 {
 	bool keep_working;
 	std::vector<std::thread> treads;
-	std::queue<std::packaged_task<void()>> tasks;
+	std::queue<std::function<void()>> tasks;
+	/*std::packaged_task<void()>*/
 	std::mutex mut_;
 	std::condition_variable con_var_;
 
@@ -34,7 +35,8 @@ ThreadPool::ThreadPool(size_t size)
 
 void ThreadPool::InitFunc()
 {
-	std::packaged_task<void()> task;
+	//std::packaged_task<void()> task;
+	std::function<void()> task;
 	while (keep_working)
 	{
 		{
@@ -72,7 +74,8 @@ auto ThreadPool::exec(Func func, Args ... args)
 	auto future = task.get_future();
 	{
 		std::lock_guard<std::mutex> lock(mut_);
-		tasks.push(std::packaged_task<void()>(task));
+		tasks.push( [&task]() { task(); } );
+		/*std::packaged_task<void()>(task) */
 	}
 	con_var_.notify_one();
 
